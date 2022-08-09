@@ -26,10 +26,20 @@ const colors = [
     ["§Bw", "\x1b[47m"],
 ];
 
-module.exports = function(text) {
+const defaultOptions = {
+    newline: true,
+}
+
+module.exports = function(text, options) {
     text = text + '§n'
     colors.forEach(([ id, seq ]) => {
         text = text.replace(new RegExp(id, 'g'), seq);
     });
-    console.log(text);
+
+    options = {...defaultOptions, ...options};
+    if (options.newline) {
+        process.stdout.write(text + '\n');
+    } else {
+        process.stdout.write(text);
+    }
 }

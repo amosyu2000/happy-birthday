@@ -4,8 +4,7 @@
   "description": "Export your Google contacts birthdays into a Google calendar",
   "settings": {
     "birthdayCalendar": {
-      "name": "🎂 Birthdays",
-      "color": "#cd74e6"
+      "name": "🎂 Birthdays"
     },
     "birthdayEvent": {
       "pattern": "🎂 %s's Birthday"
@@ -18,6 +17,7 @@
     "googleapis": "^105.0.0",
     "http": "0.0.1-security",
     "open": "^8.4.0",
+    "readline-sync": "^1.4.10",
     "server-destroy": "^1.0.1",
     "url": "^0.11.0"
   },

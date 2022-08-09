@@ -24,10 +24,10 @@ module.exports = async function(auth) {
         })
     } catch (e) {
         if (e.code === 403) {
-            logger(`§FyFailed to access the People API. Make sure that the §Fm${package.name} §Fyapplication has permission to see and download your contacts.`);
+            logger(`§FyFailed to access the People API. Make sure that the §B${package.name} §n§Fyapplication has permission to see and download your contacts.`);
         } else {
-            logger(`§FyFailed to access the People API. Please file a bug report to §u${package.bugs.url}.\n§n§Fr${e.stack}`);
+            logger(`§FyAn unexpected error occurred. Please file a bug report to §B§u${package.bugs.url}.\n§n§Fr${e.stack}`);
         }
-        return {};
+        return [];
     }
 }

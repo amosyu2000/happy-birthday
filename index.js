@@ -31,9 +31,9 @@ async function main() {
         const calendarURL = await updateCalendar(auth, birthdays);
     } catch (e) {
         if (e.message === 'access_denied') {
-            logger(`§FyAuthentication aborted. The §Fm${package.name} §Fyapplication needs access to your Google Account in order to proceed.`);
+            logger(`§FyAuthentication aborted. The §B${package.name} §n§Fyapplication needs access to your Google Account in order to proceed.`);
         } else {
-            logger(`§FyAuthentication failed. Please file a bug report to §u${package.bugs.url}.\n§n§Fr${e.stack}`);
+            logger(`§FyAn unexpected error occurred. Please file a bug report to §B§u${package.bugs.url}.\n§n§Fr${e.stack}`);
         }
     }
 }
