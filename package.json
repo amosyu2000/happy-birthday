@@ -2,6 +2,15 @@
   "name": "happy-birthday",
   "version": "1.0.0",
   "description": "Export your Google contacts birthdays into a Google calendar",
+  "settings": {
+    "birthdayCalendar": {
+      "name": "🎂 Birthdays",
+      "color": "#cd74e6"
+    },
+    "birthdayEvent": {
+      "pattern": "🎂 %s's Birthday"
+    }
+  },
   "main": "index.js",
   "dependencies": {
     "@google-cloud/local-auth": "^2.1.0",
@@ -14,6 +23,7 @@
   },
   "devDependencies": {},
   "scripts": {
+    "start": "node .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

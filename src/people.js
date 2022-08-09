@@ -5,14 +5,15 @@ const package = require('../package.json');
 module.exports = async function(auth) {
     google.options({ auth });
     const people = google.people('v1');
+
     try {
         const { data } = await people.people.connections.list({
             personFields: ['names', 'birthdays'],
             resourceName: 'people/me',
         });
-    
+
         const peopleWithBirthdays = data.connections.filter(person => person.birthdays !== undefined);
-        logger(`§FgFound the birthdays of ${peopleWithBirthdays.length} ${peopleWithBirthdays.length === 1 ? 'person' : 'people'} in your contacts.`)
+        logger(`§FgFound the birthdays of ${peopleWithBirthdays.length} ${peopleWithBirthdays.length === 1 ? 'person' : 'people'} in your contacts.`);
         return peopleWithBirthdays.map(person => {
             const primaryBirthday = person.birthdays.find(birthday => birthday.metadata.primary === true);
             const primaryName = person.names.find(name => name.metadata.primary === true);
@@ -27,6 +28,6 @@ module.exports = async function(auth) {
         } else {
             logger(`§FyFailed to access the People API. Please file a bug report to §u${package.bugs.url}.\n§n§Fr${e.stack}`);
         }
-        return {}
+        return {};
     }
 }
