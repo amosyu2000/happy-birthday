@@ -1,0 +1,29 @@
+{
+  "name": "happy-birthday",
+  "version": "1.0.0",
+  "description": "Export your Google contacts birthdays into a Google calendar",
+  "main": "index.js",
+  "dependencies": {
+    "@google-cloud/local-auth": "^2.1.0",
+    "fs": "0.0.1-security",
+    "googleapis": "^105.0.0",
+    "http": "0.0.1-security",
+    "open": "^8.4.0",
+    "server-destroy": "^1.0.1",
+    "url": "^0.11.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/amosyu2000/happy-birthday.git"
+  },
+  "author": "Amos Yu",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/amosyu2000/happy-birthday/issues"
+  },
+  "homepage": "https://github.com/amosyu2000/happy-birthday#readme"
+}

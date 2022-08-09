@@ -1,0 +1,13 @@
+{
+    "installed" : {
+        "client_id":"622576133884-jabaq8sdsbnl2gi958t2tvd4fg049r96.apps.googleusercontent.com",
+        "project_id":"happy-birthday-25",
+        "auth_uri":"https://accounts.google.com/o/oauth2/auth",
+        "token_uri":"https://oauth2.googleapis.com/token",
+        "auth_provider_x509_cert_url":"https://www.googleapis.com/oauth2/v1/certs",
+        "client_secret":"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",
+        "redirect_uris":[
+            "http://localhost:3000/oauth2callback"
+        ]
+    }
+}
