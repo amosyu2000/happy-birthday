@@ -33,6 +33,7 @@ module.exports = async function(auth, birthdays) {
             await insertBirthdayToCalendar(birthday, selectedCalendarId);
         }
         logger(`§FgAdded ${birthdays.length} birthdays to the calendar.`);
+        return selectedCalendarId;
 
     } catch (e) {
         if (e.code === 403) {
@@ -78,7 +79,7 @@ module.exports = async function(auth, birthdays) {
         else if (date < new Date()) {
             date.setFullYear(date.getFullYear() + 1);
         }
-        
+
         const eventDateTime = { date: date.toISOString().split('T')[0] };
         await calendar.events.insert({
             calendarId,

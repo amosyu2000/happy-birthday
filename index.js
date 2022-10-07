@@ -17,9 +17,9 @@ async function main() {
         'https://www.googleapis.com/auth/calendar',
     ];
 
-    // Opens the Google authentication webpage in your browser, using the keys from my GCP project (Project ID: happy-birthday-25)
-    // Since the GCP project is in "Testing" mode, only whitelisted users can use it for authentication
     try {
+        // Opens the Google authentication webpage in your browser, using the keys from my GCP project (Project ID: happy-birthday-25)
+        // Since the GCP project is in "Testing" mode, only whitelisted users can use it for authentication
         logger('Please sign in to a Google Account to continue.\nOpening in your browser...');
         const auth = await authenticate({
             keyfilePath: fs.realpathSync('oauth2.keys.json', []),
@@ -27,12 +27,21 @@ async function main() {
         });
         await userInfo(auth);
 
+        // Do the calendar stuff
         const birthdays = await people(auth);
-        await updateCalendar(auth, birthdays);
-        logger('All processes completed. You may now close your terminal.');
+        const calendarId = await updateCalendar(auth, birthdays);
+
+        // Wrap up
+        if (calendarId) {
+            logger(`§FyIf you want calendar notifications, you have to do it manually on Google Calendar (see §B§u${package.bugs.url}/1§n§Fy).`);
+            logger('All actions completed. You may now close your terminal.');
+        }
+        else {
+            logger('All actions declined. You may now close your terminal.');
+        }
     } catch (e) {
         if (e.message === 'access_denied') {
-            logger(`§FyAuthentication aborted. The §B${package.name} §n§Fyapplication needs access to your Google Account in order to proceed.`);
+            logger(`§FyAuthentication declined. The §B${package.name} §n§Fyapplication needs access to your Google Account in order to proceed.`);
         } else {
             logger(`§FyAn unexpected error occurred. Please file a bug report to §B§u${package.bugs.url}.\n§n§Fr${e.stack}`);
         }
