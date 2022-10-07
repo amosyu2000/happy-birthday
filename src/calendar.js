@@ -2,6 +2,7 @@ const { google } = require('googleapis');
 const { bugs, name, settings } = require('../package.json');
 const logger = require('./logger');
 const question = require('./question');
+const sleep = require('./sleep');
 
 module.exports = async function(auth, birthdays) {
     google.options({ auth });
@@ -31,6 +32,7 @@ module.exports = async function(auth, birthdays) {
 
         for (const birthday of birthdays) {
             await insertBirthdayToCalendar(birthday, selectedCalendarId);
+            await sleep(100);
         }
         logger(`§FgAdded ${birthdays.length} birthdays to the calendar.`);
         return selectedCalendarId;
