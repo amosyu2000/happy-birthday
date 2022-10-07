@@ -8,26 +8,32 @@ module.exports = async function(auth, birthdays) {
     const calendar = google.calendar('v3');
 
     try {
-        let selectedCalendarID = null;
+        let selectedCalendarId = null;
 
         const birthdayCalendars = await listBirthdayCalendars();
         for (const id of birthdayCalendars) {
             const doSelectCalendar = question(`§FcFound a calendar named §B"${settings.birthdayCalendar.name}" §n§Fcwith ID §B"${id}". §n§FcReplace it?`);
             if (doSelectCalendar) {
                 deleteCalendar(id);
-                selectedCalendarID = await createCalendar();
+                selectedCalendarId = await createCalendar();
                 break;
             }
         }
-        if (selectedCalendarID === null) {
+        if (selectedCalendarId === null) {
             const doCreateCalendar = question(`§FcYou don't own any${birthdayCalendars.length > 0 ? ' more ' : ' '}calendars named §B"${settings.birthdayCalendar.name}". §n§FcCreate${birthdayCalendars.length > 0 ? ' another ' : ' '}one?`);
             if (doCreateCalendar) {
-                selectedCalendarID = await createCalendar();
+                selectedCalendarId = await createCalendar();
             }
             else {
                 return '';
             }
         }
+
+        for (const birthday of birthdays) {
+            await insertBirthdayToCalendar(birthday, selectedCalendarId);
+        }
+        logger(`§FgAdded ${birthdays.length} birthdays to the calendar.`);
+
     } catch (e) {
         if (e.code === 403) {
             logger(`§FyFailed to access the Calendar API. Make sure that the §B${name} §n§Fyapplication has permission to see and edit your calendars.`);
@@ -58,5 +64,32 @@ module.exports = async function(auth, birthdays) {
     async function deleteCalendar(calendarId) {
         await calendar.calendars.delete({ calendarId });
         logger(`§FgDeleted calendar named §B"${settings.birthdayCalendar.name}" §n§Fgwith ID §B"${calendarId}".`);
+    }
+
+    async function insertBirthdayToCalendar(birthday, calendarId) {
+        // By default, all the birthday events start this year
+        const currentYear = (new Date()).getFullYear();
+        const date = new Date(currentYear, birthday.date.month-1, birthday.date.day);
+        // If a year is provided, use it instead
+        if (birthday.date.year) {
+            date.setFullYear(birthday.date.year);
+        }
+        // If the birthday has already passed this year, have the event start next year
+        else if (date < new Date()) {
+            date.setFullYear(date.getFullYear() + 1);
+        }
+        
+        const eventDateTime = { date: date.toISOString().split('T')[0] };
+        await calendar.events.insert({
+            calendarId,
+            requestBody: {
+                colorId: settings.birthdayEvent.colorId,
+                end: eventDateTime,
+                recurrence: ["RRULE:FREQ=YEARLY"],
+                start: eventDateTime,
+                summary: settings.birthdayEvent.summary.replace(/%s/g, birthday.name),
+                transparency: "transparent",
+            }
+        })
     }
 }
