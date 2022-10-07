@@ -28,7 +28,8 @@ async function main() {
         await userInfo(auth);
 
         const birthdays = await people(auth);
-        const calendarURL = await updateCalendar(auth, birthdays);
+        await updateCalendar(auth, birthdays);
+        logger('All processes completed. You may now close your terminal.');
     } catch (e) {
         if (e.message === 'access_denied') {
             logger(`§FyAuthentication aborted. The §B${package.name} §n§Fyapplication needs access to your Google Account in order to proceed.`);

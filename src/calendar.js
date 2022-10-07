@@ -12,9 +12,10 @@ module.exports = async function(auth, birthdays) {
 
         const birthdayCalendars = await listBirthdayCalendars();
         for (const id of birthdayCalendars) {
-            const doSelectCalendar = question(`§FcFound a calendar named §B"${settings.birthdayCalendar.name}" §n§Fcwith ID §B"${id}". §n§FcOverwrite it?`);
+            const doSelectCalendar = question(`§FcFound a calendar named §B"${settings.birthdayCalendar.name}" §n§Fcwith ID §B"${id}". §n§FcReplace it?`);
             if (doSelectCalendar) {
-                selectedCalendarID = id;
+                deleteCalendar(id);
+                selectedCalendarID = await createCalendar();
                 break;
             }
         }
@@ -52,5 +53,10 @@ module.exports = async function(auth, birthdays) {
         });
         logger(`§FgCreated a new calendar named §B"${settings.birthdayCalendar.name}" §n§Fgwith ID §B"${data.id}".`);
         return data.id;
+    }
+
+    async function deleteCalendar(calendarId) {
+        await calendar.calendars.delete({ calendarId });
+        logger(`§FgDeleted calendar named §B"${settings.birthdayCalendar.name}" §n§Fgwith ID §B"${calendarId}".`);
     }
 }
