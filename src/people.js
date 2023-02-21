@@ -9,6 +9,8 @@ module.exports = async function(auth) {
     try {
         const { data } = await people.people.connections.list({
             personFields: ['names', 'birthdays'],
+            // https://stackoverflow.com/a/60519966/12191708
+            pageSize: 1000,
             resourceName: 'people/me',
         });
 
