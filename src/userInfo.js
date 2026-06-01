@@ -6,5 +6,7 @@ module.exports = async function(auth) {
     const oauth2 = google.oauth2('v2');
 
     const { data } = await oauth2.userinfo.get({});
-    logger(`§FgSuccessfully signed in as §B${data.name}§n§Fg.`)
+    logger(`§FgSuccessfully signed in as §B${data.name}§n§Fg.`);
+
+    return data.name;
 }

@@ -25,11 +25,11 @@ async function main() {
             keyfilePath: fs.realpathSync('oauth2.keys.json', []),
             scopes
         });
-        await userInfo(auth);
+        const username = await userInfo(auth);
 
         // Do the calendar stuff
-        const birthdays = await people(auth);
-        const calendarId = await updateCalendar(auth, birthdays);
+        const events = await people(auth, username);
+        const calendarId = await updateCalendar(auth, events);
 
         // Wrap up
         if (calendarId) {

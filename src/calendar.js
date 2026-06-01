@@ -4,7 +4,7 @@ const logger = require('./logger');
 const question = require('./question');
 const sleep = require('./sleep');
 
-module.exports = async function(auth, birthdays) {
+module.exports = async function(auth, events) {
     google.options({ auth });
     const calendar = google.calendar('v3');
 
@@ -30,11 +30,11 @@ module.exports = async function(auth, birthdays) {
             }
         }
 
-        for (const birthday of birthdays) {
-            await insertBirthdayToCalendar(birthday, selectedCalendarId);
+        for (const event of events) {
+            await insertEventToCalendar(event, selectedCalendarId);
             await sleep(100);
         }
-        logger(`§FgAdded ${birthdays.length} birthdays to the calendar.`);
+        logger(`§FgAdded ${events.length} events to the calendar.`);
         return selectedCalendarId;
 
     } catch (e) {
@@ -69,28 +69,24 @@ module.exports = async function(auth, birthdays) {
         logger(`§FgDeleted calendar named §B"${settings.birthdayCalendar.name}" §n§Fgwith ID §B"${calendarId}".`);
     }
 
-    async function insertBirthdayToCalendar(birthday, calendarId) {
-        // By default, all the birthday events start this year
+    async function insertEventToCalendar(event, calendarId) {
+        // By default, all the events start this year
         const currentYear = (new Date()).getFullYear();
-        const date = new Date(currentYear, birthday.date.month-1, birthday.date.day);
+        const date = new Date(currentYear, event.date.month-1, event.date.day);
         // If a year is provided, use it instead
-        if (birthday.date.year) {
-            date.setFullYear(birthday.date.year);
-        }
-        // If the birthday has already passed this year, have the event start next year
-        else if (date < new Date()) {
-            date.setFullYear(date.getFullYear() + 1);
+        if (event.date.year) {
+            date.setFullYear(event.date.year);
         }
 
         const eventDateTime = { date: date.toISOString().split('T')[0] };
         await calendar.events.insert({
             calendarId,
             requestBody: {
-                colorId: settings.birthdayEvent.colorId,
+                colorId: settings.event.colorId,
                 end: eventDateTime,
                 recurrence: ["RRULE:FREQ=YEARLY"],
                 start: eventDateTime,
-                summary: settings.birthdayEvent.summary.replace(/%s/g, birthday.name),
+                summary: event.name,
                 transparency: "transparent",
             }
         })

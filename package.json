@@ -6,9 +6,8 @@
     "birthdayCalendar": {
       "name": "🎂 Birthdays"
     },
-    "birthdayEvent": {
-      "colorId": 3,
-      "summary": "🎂 %s's birthday"
+    "event": {
+      "colorId": 3
     }
   },
   "main": "index.js",

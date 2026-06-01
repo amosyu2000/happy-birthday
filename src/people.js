@@ -2,27 +2,42 @@ const { google } = require('googleapis');
 const logger = require('./logger');
 const package = require('../package.json');
 
-module.exports = async function(auth) {
+module.exports = async function(auth, username) {
     google.options({ auth });
     const people = google.people('v1');
 
     const peopleList = await asyncListAllPeople(people);
 
-    const peopleWithBirthdays = peopleList.filter(person => person.birthdays !== undefined);
-    logger(`§FgFound the birthdays of ${peopleWithBirthdays.length} ${peopleWithBirthdays.length === 1 ? 'person' : 'people'} in your contacts.`);
-    return peopleWithBirthdays.map(person => {
-        const primaryBirthday = person.birthdays.find(birthday => birthday.metadata.primary === true);
-        const primaryName = person.names.find(name => name.metadata.primary === true);
-        return {
-            date: primaryBirthday.date,
-            name: primaryName.displayName,
+    const peopleWithEvents = peopleList.filter(person => person.birthdays !== undefined || people.events !== undefined);
+    logger(`§FgFound the events of ${peopleWithEvents.length} ${peopleWithEvents.length === 1 ? 'person' : 'people'} in your contacts.`);
+
+    const events = [];
+    peopleWithEvents.forEach(person => {
+        const { displayName } = person.names.find(name => name.metadata.primary === true);
+        const name = displayName === username ? 'My' : `${displayName}'s`;
+
+        if (person.birthdays !== undefined) {
+            const primaryBirthday = person.birthdays.find(birthday => birthday.metadata.primary === true);
+            events.push({
+                date: primaryBirthday.date,
+                name: `🎂 ${name} birthday`
+            });
         }
-    })
+        if (person.events !== undefined) {
+            person.events.forEach(event => {
+                events.push({
+                    date: event.date,
+                    name: `📅 ${name} ${event.type}`
+                })
+            });
+        }
+    });
+    return events;
 
     async function asyncListAllPeople(googlePeople, peopleList = [], pageToken = undefined) {
         try {
             const { data } = await googlePeople.people.connections.list({
-                personFields: ['names', 'birthdays'],
+                personFields: ['names', 'birthdays', 'events'],
                 // https://stackoverflow.com/a/60519966/12191708
                 pageSize: 10,
                 pageToken: pageToken,
@@ -30,7 +45,7 @@ module.exports = async function(auth) {
             });
             const { connections, nextPageToken, totalItems } = data;
             const nextPeopleList = [...peopleList, ...connections];
-    
+
             if (nextPageToken && nextPeopleList.length < totalItems) {
                 return asyncListAllPeople(googlePeople, nextPeopleList, nextPageToken);
             }
